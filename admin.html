@@ -1,0 +1,3684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ShaqoHel Admin</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Inter,Arial,sans-serif;
+}
+
+:root{
+  --primary:#2563eb;
+  --primary2:#4f46e5;
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --success:#16a34a;
+  --danger:#dc2626;
+  --warning:#d97706;
+  --sidebar:#111827;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+.login-page{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at top left,#dbeafe,transparent 35%),
+    radial-gradient(circle at bottom right,#e0e7ff,transparent 35%),
+    #f8fafc;
+}
+
+.login-card{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  padding:32px 25px;
+  border-radius:25px;
+  border:1px solid var(--border);
+  box-shadow:0 25px 70px rgba(15,23,42,.12);
+}
+
+.login-logo{
+  width:65px;
+  height:65px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:19px;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:#fff;
+  font-size:30px;
+  font-weight:900;
+  margin-bottom:18px;
+}
+
+.login-card h1{
+  font-size:27px;
+  margin-bottom:7px;
+}
+
+.login-card p{
+  color:var(--muted);
+  margin-bottom:24px;
+  line-height:1.5;
+}
+
+.form-group{
+  margin-bottom:16px;
+}
+
+.form-group label{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;
+  padding:13px 14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  outline:none;
+  background:#fff;
+  color:var(--text);
+}
+
+.form-group textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+
+.primary-btn{
+  border:0;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:#fff;
+  padding:12px 17px;
+  border-radius:11px;
+  font-weight:800;
+}
+
+.primary-btn:active{
+  transform:scale(.98);
+}
+
+.full-btn{
+  width:100%;
+}
+
+.error{
+  background:#fee2e2;
+  color:#991b1b;
+  padding:11px 13px;
+  border-radius:10px;
+  margin-bottom:15px;
+  font-size:13px;
+}
+
+/* =========================
+   APP
+========================= */
+
+.app{
+  min-height:100vh;
+}
+
+.sidebar{
+  width:250px;
+  background:var(--sidebar);
+  color:#fff;
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  z-index:100;
+  padding:20px 14px;
+  transition:.3s ease;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:5px 10px 22px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.brand-icon{
+  width:43px;
+  height:43px;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  font-weight:900;
+  font-size:19px;
+}
+
+.brand h2{
+  font-size:19px;
+}
+
+.brand small{
+  color:#9ca3af;
+}
+
+.nav{
+  margin-top:22px;
+}
+
+.nav button{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  border:0;
+  background:transparent;
+  color:#9ca3af;
+  padding:13px;
+  border-radius:11px;
+  margin-bottom:5px;
+  font-weight:700;
+  text-align:left;
+}
+
+.nav button.active,
+.nav button:hover{
+  background:#1f2937;
+  color:#fff;
+}
+
+.sidebar-bottom{
+  position:absolute;
+  bottom:20px;
+  left:14px;
+  right:14px;
+}
+
+.logout-btn{
+  width:100%;
+  border:1px solid #374151;
+  background:#1f2937;
+  color:#fca5a5;
+  padding:12px;
+  border-radius:11px;
+  font-weight:800;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+  margin-left:250px;
+  min-height:100vh;
+}
+
+.topbar{
+  height:72px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+
+.topbar-left{
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.topbar h2{
+  font-size:20px;
+}
+
+.menu-btn{
+  display:none;
+  border:0;
+  background:#f3f4f6;
+  padding:9px 11px;
+  border-radius:9px;
+  font-size:20px;
+}
+
+.top-actions{
+  display:flex;
+  gap:7px;
+}
+
+.icon-btn{
+  width:40px;
+  height:40px;
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:10px;
+  font-size:17px;
+}
+
+.content{
+  padding:25px;
+}
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.page-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:23px;
+}
+
+.page-header h1{
+  font-size:27px;
+}
+
+.page-header p{
+  color:var(--muted);
+  margin-top:5px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:23px;
+}
+
+.stat-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:19px;
+  box-shadow:0 5px 20px rgba(15,23,42,.04);
+}
+
+.stat-icon{
+  width:43px;
+  height:43px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#eff6ff;
+  border-radius:12px;
+  font-size:20px;
+}
+
+.stat-card h3{
+  font-size:28px;
+  margin-top:13px;
+}
+
+.stat-card p{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:3px;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:17px;
+  box-shadow:0 5px 20px rgba(15,23,42,.04);
+  overflow:hidden;
+}
+
+.card-header{
+  padding:17px 19px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.card-header h3{
+  font-size:17px;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
+
+.toolbar{
+  padding:15px 19px;
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  border-bottom:1px solid var(--border);
+}
+
+.toolbar input,
+.toolbar select{
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#fff;
+  outline:none;
+}
+
+.toolbar input{
+  min-width:230px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:800px;
+}
+
+th,
+td{
+  padding:14px 17px;
+  border-bottom:1px solid var(--border);
+  text-align:left;
+  font-size:13px;
+}
+
+th{
+  color:#6b7280;
+  font-size:11px;
+  text-transform:uppercase;
+}
+
+.job-title{
+  font-weight:800;
+}
+
+.job-company{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.badge.pending{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.badge.approved{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.badge.rejected{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.badge.verified{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.badge.normal{
+  background:#f3f4f6;
+  color:#4b5563;
+}
+
+.actions{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+}
+
+.small-btn{
+  border:1px solid var(--border);
+  background:#fff;
+  padding:7px 9px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.small-btn.approve{
+  color:#15803d;
+}
+
+.small-btn.reject,
+.small-btn.delete{
+  color:#dc2626;
+}
+
+.small-btn.edit{
+  color:#2563eb;
+}
+
+.empty{
+  padding:45px 15px;
+  text-align:center;
+  color:var(--muted);
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+  z-index:200;
+  backdrop-filter:blur(5px);
+}
+
+.modal-overlay.show{
+  display:flex;
+}
+
+.modal{
+  width:100%;
+  max-width:700px;
+  max-height:92vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:20px;
+}
+
+.modal-header{
+  padding:18px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:2;
+}
+
+.close-btn{
+  width:36px;
+  height:36px;
+  border:0;
+  background:#f3f4f6;
+  border-radius:9px;
+  font-size:21px;
+}
+
+.modal-body{
+  padding:19px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.checkbox-row{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  padding-top:10px;
+}
+
+.checkbox-row input{
+  width:18px;
+  height:18px;
+}
+
+.modal-footer{
+  padding:16px 19px;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  position:sticky;
+  bottom:0;
+  background:#fff;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.75);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:500;
+  backdrop-filter:blur(3px);
+}
+
+.loading.show{
+  display:flex;
+}
+
+.spinner{
+  width:42px;
+  height:42px;
+  border:4px solid #dbeafe;
+  border-top-color:var(--primary);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  max-width:calc(100% - 36px);
+  background:#111827;
+  color:#fff;
+  padding:13px 16px;
+  border-radius:11px;
+  opacity:0;
+  transform:translateY(80px);
+  transition:.3s;
+  z-index:600;
+  font-size:13px;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.toast.success{
+  background:#166534;
+}
+
+.toast.error{
+  background:#991b1b;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
+
+  .sidebar{
+    transform:translateX(-100%);
+    box-shadow:10px 0 35px rgba(0,0,0,.18);
+  }
+
+  .sidebar.open{
+    transform:translateX(0);
+  }
+
+  .main{
+    margin-left:0;
+  }
+
+  .menu-btn{
+    display:block;
+  }
+
+  .topbar{
+    height:65px;
+    padding:0 13px;
+  }
+
+  .topbar h2{
+    font-size:16px;
+  }
+
+  .content{
+    padding:15px 12px 30px;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .stat-card{
+    padding:14px;
+    border-radius:14px;
+  }
+
+  .stat-card h3{
+    font-size:23px;
+  }
+
+  .page-header{
+    align-items:flex-start;
+    flex-direction:column;
+    margin-bottom:17px;
+  }
+
+  .page-header h1{
+    font-size:23px;
+  }
+
+  .page-header .primary-btn{
+    width:100%;
+  }
+
+  .toolbar{
+    padding:12px;
+    flex-direction:column;
+  }
+
+  .toolbar input,
+  .toolbar select{
+    width:100%;
+    min-width:0;
+  }
+
+  .card{
+    border-radius:14px;
+  }
+
+  /*
+     Mobile jobs table becomes
+     horizontally scrollable,
+     so no information is lost.
+  */
+
+  table{
+    min-width:760px;
+  }
+
+  .modal-overlay{
+    padding:8px;
+    align-items:flex-end;
+  }
+
+  .modal{
+    max-height:94vh;
+    border-radius:20px 20px 0 0;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+
+  .full{
+    grid-column:auto;
+  }
+
+  .modal-footer{
+    padding-bottom:calc(15px + env(safe-area-inset-bottom));
+  }
+
+  .login-card{
+    padding:28px 20px;
+  }
+
+}
+
+@media(max-width:430px){
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .stat-card p{
+    font-size:11px;
+  }
+
+  .stat-card h3{
+    font-size:21px;
+  }
+
+  .top-actions{
+    gap:4px;
+  }
+
+  .icon-btn{
+    width:36px;
+    height:36px;
+  }
+
+}
+
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark{
+  --bg:#0b1120;
+  --card:#111827;
+  --text:#f3f4f6;
+  --muted:#9ca3af;
+  --border:#263244;
+}
+
+body.dark .topbar,
+body.dark .card,
+body.dark .stat-card,
+body.dark .modal,
+body.dark .modal-header,
+body.dark .modal-footer,
+body.dark .form-group input,
+body.dark .form-group select,
+body.dark .form-group textarea,
+body.dark .toolbar input,
+body.dark .toolbar select{
+  background:#111827;
+  color:#f3f4f6;
+}
+
+body.dark .icon-btn,
+body.dark .small-btn,
+body.dark .menu-btn,
+body.dark .close-btn{
+  background:#1f2937;
+  color:#f3f4f6;
+  border-color:#374151;
+}
+
+body.dark th,
+body.dark td{
+  border-color:#263244;
+}
+
+body.dark .loading{
+  background:rgba(3,7,18,.75);
+}
+
+body.dark .login-card{
+  background:#111827;
+  border-color:#263244;
+}
+
+body.dark .login-page{
+  background:#080d19;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     LOGIN
+========================= -->
+
+<div id="loginPage" class="login-page">
+
+  <div class="login-card">
+
+    <div class="login-logo">S</div>
+
+    <h1>ShaqoHel Admin</h1>
+
+    <p>
+      Manage your jobs directly from your phone.
+    </p>
+
+    <div id="loginError" class="error hidden"></div>
+
+    <form id="loginForm">
+
+      <div class="form-group">
+        <label>Email</label>
+
+        <input
+          type="email"
+          id="loginEmail"
+          value="salahmohamednor11@gmail.com"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Enter your password"
+          required
+        >
+      </div>
+
+      <button
+        class="primary-btn full-btn"
+        type="submit"
+      >
+        🔐 Sign In
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     APP
+========================= -->
+
+<div id="app" class="app hidden">
+
+  <!-- SIDEBAR -->
+
+  <aside id="sidebar" class="sidebar">
+
+    <div class="brand">
+
+      <div class="brand-icon">
+        S
+      </div>
+
+      <div>
+        <h2>ShaqoHel</h2>
+        <small>Admin Panel</small>
+      </div>
+
+    </div>
+
+    <nav class="nav">
+
+      <button
+        class="nav-btn active"
+        data-page="dashboard"
+      >
+        📊 Dashboard
+      </button>
+
+      <button
+        class="nav-btn"
+        data-page="jobs"
+      >
+        💼 Jobs
+      </button>
+
+      <button
+        class="nav-btn"
+        data-page="users"
+      >
+        👥 Users
+      </button>
+
+      <button
+        class="nav-btn"
+        data-page="visitors"
+      >
+        🌐 Visitors
+      </button>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+      <button
+        id="logoutBtn"
+        class="logout-btn"
+      >
+        🚪 Logout
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <button
+          id="menuBtn"
+          class="menu-btn"
+        >
+          ☰
+        </button>
+
+        <h2 id="pageTitle">
+          Dashboard
+        </h2>
+
+      </div>
+
+      <div class="top-actions">
+
+        <button
+          id="darkModeBtn"
+          class="icon-btn"
+          title="Dark mode"
+        >
+          🌙
+        </button>
+
+        <button
+          id="refreshBtn"
+          class="icon-btn"
+          title="Refresh"
+        >
+          ↻
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <section class="content">
+
+
+      <!-- =========================
+           DASHBOARD
+      ========================= -->
+
+      <div
+        id="dashboardPage"
+        class="page active"
+      >
+
+        <div class="page-header">
+
+          <div>
+
+            <h1>
+              Dashboard
+            </h1>
+
+            <p>
+              ShaqoHel maamulkaaga.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="stats">
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              💼
+            </div>
+
+            <h3 id="totalJobs">
+              0
+            </h3>
+
+            <p>
+              Total Jobs
+            </p>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              ⏳
+            </div>
+
+            <h3 id="pendingJobs">
+              0
+            </h3>
+
+            <p>
+              Pending Jobs
+            </p>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              ✅
+            </div>
+
+            <h3 id="approvedJobs">
+              0
+            </h3>
+
+            <p>
+              Approved Jobs
+            </p>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              👥
+            </div>
+
+            <h3 id="totalUsers">
+              0
+            </h3>
+
+            <p>
+              Registered Users
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-header">
+
+            <h3>
+              Recent Jobs
+            </h3>
+
+            <button
+              class="small-btn"
+              onclick="showPage('jobs')"
+            >
+              View All
+            </button>
+
+          </div>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Job</th>
+                  <th>Location</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="recentJobsBody"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           JOBS
+      ========================= -->
+
+      <div
+        id="jobsPage"
+        class="page"
+      >
+
+        <div class="page-header">
+
+          <div>
+
+            <h1>
+              Jobs Management
+            </h1>
+
+            <p>
+              Manage all ShaqoHel jobs.
+            </p>
+
+          </div>
+
+          <button
+            id="addJobBtn"
+            class="primary-btn"
+          >
+            + Add Job
+          </button>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="toolbar">
+
+            <input
+              type="text"
+              id="jobSearch"
+              placeholder="🔎 Search jobs..."
+            >
+
+            <select id="statusFilter">
+
+              <option value="all">
+                All Status
+              </option>
+
+              <option value="pending">
+                Pending
+              </option>
+
+              <option value="approved">
+                Approved
+              </option>
+
+              <option value="rejected">
+                Rejected
+              </option>
+
+            </select>
+
+
+            <select id="categoryFilter">
+
+              <option value="all">
+                All Categories
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Job</th>
+                  <th>Location</th>
+                  <th>Category</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Verified</th>
+                  <th>Actions</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="jobsBody"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           USERS
+      ========================= -->
+
+      <div
+        id="usersPage"
+        class="page"
+      >
+
+        <div class="page-header">
+
+          <div>
+
+            <h1>
+              Registered Users
+            </h1>
+
+            <p>
+              Users registered in ShaqoHel.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Created</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="usersBody"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           VISITORS
+      ========================= -->
+
+      <div
+        id="visitorsPage"
+        class="page"
+      >
+
+        <div class="page-header">
+
+          <div>
+
+            <h1>
+              Visitors
+            </h1>
+
+            <p>
+              Website visitor information.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="stats">
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              🌐
+            </div>
+
+            <h3 id="visitorCount">
+              0
+            </h3>
+
+            <p>
+              Visitor Records
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Visitor</th>
+                  <th>Page</th>
+                  <th>Last Seen</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="visitorsBody"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- =========================
+     JOB MODAL
+========================= -->
+
+<div
+  id="jobModal"
+  class="modal-overlay"
+>
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <h2 id="modalTitle">
+        Add Job
+      </h2>
+
+      <button
+        id="closeModal"
+        class="close-btn"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <form id="jobForm">
+
+      <div class="modal-body">
+
+        <input
+          type="hidden"
+          id="jobId"
+        >
+
+
+        <div class="form-grid">
+
+
+          <div class="form-group">
+
+            <label>
+              Job Title *
+            </label>
+
+            <input
+              id="jobTitle"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Company *
+            </label>
+
+            <input
+              id="jobCompany"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Location
+            </label>
+
+            <input
+              id="jobLocation"
+              placeholder="Mogadishu, Somalia"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Country
+            </label>
+
+            <input
+              id="jobCountry"
+              placeholder="Somalia"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Category
+            </label>
+
+            <input
+              id="jobCategory"
+              placeholder="Technology"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Job Type
+            </label>
+
+            <select id="jobType">
+
+              <option value="Full-time">
+                Full-time
+              </option>
+
+              <option value="Part-time">
+                Part-time
+              </option>
+
+              <option value="Remote">
+                Remote
+              </option>
+
+              <option value="Contract">
+                Contract
+              </option>
+
+              <option value="Internship">
+                Internship
+              </option>
+
+              <option value="Freelance">
+                Freelance
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Salary
+            </label>
+
+            <input
+              id="jobSalary"
+              placeholder="Only enter real salary"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Deadline
+            </label>
+
+            <input
+              id="jobDeadline"
+              type="date"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Application URL
+            </label>
+
+            <input
+              id="applicationUrl"
+              type="url"
+              placeholder="https://example.com/apply"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Source Name
+            </label>
+
+            <input
+              id="sourceName"
+              placeholder="Company Website"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Source URL
+            </label>
+
+            <input
+              id="sourceUrl"
+              type="url"
+              placeholder="https://example.com"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Status
+            </label>
+
+            <select id="jobStatus">
+
+              <option value="pending">
+                Pending
+              </option>
+
+              <option value="approved">
+                Approved
+              </option>
+
+              <option value="rejected">
+                Rejected
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Verified
+            </label>
+
+            <div class="checkbox-row">
+
+              <input
+                type="checkbox"
+                id="jobVerified"
+              >
+
+              <span>
+                Mark as verified
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group full">
+
+            <label>
+              Description
+            </label>
+
+            <textarea
+              id="jobDescription"
+            ></textarea>
+
+          </div>
+
+
+          <div class="form-group full">
+
+            <label>
+              Requirements
+            </label>
+
+            <textarea
+              id="jobRequirements"
+            ></textarea>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          id="cancelModal"
+          class="small-btn"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="primary-btn"
+        >
+          Save Job
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- LOADING -->
+
+<div
+  id="loading"
+  class="loading"
+>
+
+  <div class="spinner"></div>
+
+</div>
+
+
+<div
+  id="toast"
+  class="toast"
+></div>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://mvzsjffkfxfodjckwbbn.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_NBEl4MPHonAWnFRHZnzjHw_Am7RXAQw";
+
+const ADMIN_EMAIL =
+"salahmohamednor11@gmail.com";
+
+const db =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let jobs = [];
+let users = [];
+let visitors = [];
+let editingJobId = null;
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function $(id){
+  return document.getElementById(id);
+}
+
+
+function escapeHTML(value){
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function formatDate(value){
+
+  if(!value){
+    return "-";
+  }
+
+  const date =
+    new Date(value);
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+    return escapeHTML(value);
+  }
+
+  return date.toLocaleDateString();
+
+}
+
+
+function showLoading(){
+  $("loading").classList.add("show");
+}
+
+
+function hideLoading(){
+  $("loading").classList.remove("show");
+}
+
+
+function toast(
+  message,
+  type=""
+){
+
+  const el =
+    $("toast");
+
+  el.textContent =
+    message;
+
+  el.className =
+    "toast show " + type;
+
+  setTimeout(()=>{
+    el.className =
+      "toast";
+  },3000);
+
+}
+
+
+function showError(message){
+
+  $("loginError")
+    .textContent =
+    message;
+
+  $("loginError")
+    .classList
+    .remove("hidden");
+
+}
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+async function checkSession(){
+
+  const {
+    data,
+    error
+  } =
+    await db.auth.getSession();
+
+  if(error){
+
+    console.error(error);
+
+    showLogin();
+
+    return;
+  }
+
+
+  if(data.session){
+
+    const email =
+      data.session.user.email;
+
+    if(
+      !email ||
+      email.toLowerCase() !==
+      ADMIN_EMAIL.toLowerCase()
+    ){
+
+      await db.auth.signOut();
+
+      showError(
+        "This account is not authorized."
+      );
+
+      return;
+    }
+
+    showApp();
+
+  }else{
+
+    showLogin();
+
+  }
+
+}
+
+
+function showLogin(){
+
+  $("loginPage")
+    .classList
+    .remove("hidden");
+
+  $("app")
+    .classList
+    .add("hidden");
+
+}
+
+
+function showApp(){
+
+  $("loginPage")
+    .classList
+    .add("hidden");
+
+  $("app")
+    .classList
+    .remove("hidden");
+
+  loadAll();
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+$("loginForm")
+.addEventListener(
+  "submit",
+  async(e)=>{
+
+    e.preventDefault();
+
+    $("loginError")
+      .classList
+      .add("hidden");
+
+    const email =
+      $("loginEmail")
+      .value
+      .trim();
+
+    const password =
+      $("loginPassword")
+      .value;
+
+
+    if(
+      email.toLowerCase() !==
+      ADMIN_EMAIL.toLowerCase()
+    ){
+
+      showError(
+        "Only the authorized admin can sign in."
+      );
+
+      return;
+    }
+
+
+    showLoading();
+
+
+    const {
+      data,
+      error
+    } =
+      await db.auth.signInWithPassword({
+        email,
+        password
+      });
+
+
+    hideLoading();
+
+
+    if(error){
+
+      showError(
+        error.message
+      );
+
+      return;
+    }
+
+
+    if(!data.user){
+
+      showError(
+        "Login failed."
+      );
+
+      return;
+    }
+
+
+    showApp();
+
+    toast(
+      "Welcome back, Admin",
+      "success"
+    );
+
+  }
+);
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+$("logoutBtn")
+.addEventListener(
+  "click",
+  async()=>{
+
+    await db.auth.signOut();
+
+    showLogin();
+
+    $("loginPassword")
+      .value = "";
+
+  }
+);
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+document
+.querySelectorAll(".nav-btn")
+.forEach(button=>{
+
+  button.addEventListener(
+    "click",
+    ()=>{
+
+      showPage(
+        button.dataset.page
+      );
+
+    }
+  );
+
+});
+
+
+function showPage(page){
+
+  document
+  .querySelectorAll(".page")
+  .forEach(p=>{
+    p.classList.remove("active");
+  });
+
+
+  const target =
+    $(page + "Page");
+
+
+  if(target){
+    target.classList.add("active");
+  }
+
+
+  document
+  .querySelectorAll(".nav-btn")
+  .forEach(btn=>{
+
+    btn.classList.toggle(
+      "active",
+      btn.dataset.page === page
+    );
+
+  });
+
+
+  const titles = {
+
+    dashboard:
+      "Dashboard",
+
+    jobs:
+      "Jobs Management",
+
+    users:
+      "Registered Users",
+
+    visitors:
+      "Visitors"
+
+  };
+
+
+  $("pageTitle")
+    .textContent =
+    titles[page] ||
+    "Dashboard";
+
+
+  $("sidebar")
+    .classList
+    .remove("open");
+
+}
+
+
+window.showPage =
+showPage;
+
+
+/* =====================================================
+   LOAD
+===================================================== */
+
+async function loadAll(){
+
+  showLoading();
+
+
+  await Promise.all([
+    loadJobs(),
+    loadUsers(),
+    loadVisitors()
+  ]);
+
+
+  hideLoading();
+
+}
+
+
+/* =====================================================
+   JOBS
+===================================================== */
+
+async function loadJobs(){
+
+  const {
+    data,
+    error
+  } =
+    await db
+    .from("jobs")
+    .select("*");
+
+
+  if(error){
+
+    console.error(
+      "Jobs:",
+      error
+    );
+
+    toast(
+      "Could not load jobs: " +
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  jobs =
+    data || [];
+
+
+  renderJobs();
+
+  renderRecentJobs();
+
+  updateStats();
+
+  updateCategories();
+
+}
+
+
+function updateStats(){
+
+  $("totalJobs")
+    .textContent =
+    jobs.length;
+
+
+  $("pendingJobs")
+    .textContent =
+    jobs.filter(
+      j =>
+      String(
+        j.status || ""
+      ).toLowerCase()
+      === "pending"
+    ).length;
+
+
+  $("approvedJobs")
+    .textContent =
+    jobs.filter(
+      j =>
+      String(
+        j.status || ""
+      ).toLowerCase()
+      === "approved"
+    ).length;
+
+}
+
+
+function updateCategories(){
+
+  const select =
+    $("categoryFilter");
+
+  const current =
+    select.value;
+
+
+  const categories =
+    [
+      ...new Set(
+        jobs
+        .map(
+          j=>j.category
+        )
+        .filter(Boolean)
+      )
+    ].sort();
+
+
+  select.innerHTML =
+    `
+      <option value="all">
+        All Categories
+      </option>
+    `;
+
+
+  categories.forEach(
+    category=>{
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        category;
+
+      option.textContent =
+        category;
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+
+  if(
+    categories.includes(
+      current
+    )
+  ){
+
+    select.value =
+      current;
+
+  }
+
+}
+
+
+/* =====================================================
+   RENDER JOBS
+===================================================== */
+
+function renderJobs(){
+
+  const body =
+    $("jobsBody");
+
+
+  const search =
+    $("jobSearch")
+    .value
+    .trim()
+    .toLowerCase();
+
+
+  const status =
+    $("statusFilter")
+    .value;
+
+
+  const category =
+    $("categoryFilter")
+    .value;
+
+
+  const filtered =
+    jobs.filter(job=>{
+
+      const searchable = [
+
+        job.title,
+        job.company,
+        job.location,
+        job.country,
+        job.category,
+        job["job-type"]
+
+      ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+
+      const matchesSearch =
+        !search ||
+        searchable.includes(
+          search
+        );
+
+
+      const matchesStatus =
+        status === "all" ||
+        String(
+          job.status || ""
+        ).toLowerCase()
+        === status;
+
+
+      const matchesCategory =
+        category === "all" ||
+        job.category === category;
+
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesCategory
+      );
+
+    });
+
+
+  if(!filtered.length){
+
+    body.innerHTML =
+      `
+        <tr>
+          <td colspan="7">
+            <div class="empty">
+              No jobs found.
+            </div>
+          </td>
+        </tr>
+      `;
+
+    return;
+  }
+
+
+  body.innerHTML =
+    filtered
+    .map(job=>{
+
+      const status =
+        String(
+          job.status ||
+          "pending"
+        ).toLowerCase();
+
+
+      const verified =
+        job.verified === true;
+
+
+      return `
+        <tr>
+
+          <td>
+
+            <div class="job-title">
+              ${escapeHTML(
+                job.title
+              )}
+            </div>
+
+            <div class="job-company">
+              ${escapeHTML(
+                job.company
+              )}
+            </div>
+
+          </td>
+
+
+          <td>
+            ${escapeHTML(
+              job.location || "-"
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHTML(
+              job.category || "-"
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHTML(
+              job["job-type"] || "-"
+            )}
+          </td>
+
+
+          <td>
+
+            <span
+              class="badge ${status}"
+            >
+              ${escapeHTML(
+                status
+              )}
+            </span>
+
+          </td>
+
+
+          <td>
+
+            ${
+              verified
+
+              ? `
+                <span
+                  class="badge verified"
+                >
+                  ✓ Verified
+                </span>
+              `
+
+              : `
+                <span
+                  class="badge normal"
+                >
+                  Not verified
+                </span>
+              `
+            }
+
+          </td>
+
+
+          <td>
+
+            <div class="actions">
+
+
+              ${
+                status !== "approved"
+
+                ? `
+                  <button
+                    class="small-btn approve"
+                    onclick="changeStatus(
+                      '${job.id}',
+                      'approved'
+                    )"
+                  >
+                    Approve
+                  </button>
+                `
+
+                : ""
+              }
+
+
+              ${
+                status !== "rejected"
+
+                ? `
+                  <button
+                    class="small-btn reject"
+                    onclick="changeStatus(
+                      '${job.id}',
+                      'rejected'
+                    )"
+                  >
+                    Reject
+                  </button>
+                `
+
+                : ""
+              }
+
+
+              <button
+                class="small-btn edit"
+                onclick="editJob('${job.id}')"
+              >
+                Edit
+              </button>
+
+
+              <button
+                class="small-btn"
+                onclick="toggleVerified('${job.id}')"
+              >
+                ${
+                  verified
+                  ? "Unverify"
+                  : "Verify"
+                }
+              </button>
+
+
+              <button
+                class="small-btn delete"
+                onclick="deleteJob('${job.id}')"
+              >
+                Delete
+              </button>
+
+
+            </div>
+
+          </td>
+
+        </tr>
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =====================================================
+   RECENT JOBS
+===================================================== */
+
+function renderRecentJobs(){
+
+  const body =
+    $("recentJobsBody");
+
+
+  const recent =
+    [...jobs]
+    .sort(
+      (a,b)=>
+        new Date(
+          b.created_at || 0
+        ) -
+        new Date(
+          a.created_at || 0
+        )
+    )
+    .slice(0,8);
+
+
+  if(!recent.length){
+
+    body.innerHTML =
+      `
+        <tr>
+          <td colspan="5">
+            <div class="empty">
+              No jobs yet.
+            </div>
+          </td>
+        </tr>
+      `;
+
+    return;
+  }
+
+
+  body.innerHTML =
+    recent
+    .map(job=>{
+
+      const status =
+        String(
+          job.status ||
+          "pending"
+        ).toLowerCase();
+
+
+      return `
+        <tr>
+
+          <td>
+
+            <div class="job-title">
+              ${escapeHTML(
+                job.title
+              )}
+            </div>
+
+            <div class="job-company">
+              ${escapeHTML(
+                job.company
+              )}
+            </div>
+
+          </td>
+
+
+          <td>
+            ${escapeHTML(
+              job.location || "-"
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHTML(
+              job["job-type"] || "-"
+            )}
+          </td>
+
+
+          <td>
+
+            <span
+              class="badge ${status}"
+            >
+              ${escapeHTML(
+                status
+              )}
+            </span>
+
+          </td>
+
+
+          <td>
+            ${formatDate(
+              job.created_at
+            )}
+          </td>
+
+        </tr>
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =====================================================
+   ADD JOB
+===================================================== */
+
+$("addJobBtn")
+.addEventListener(
+  "click",
+  ()=>{
+    openJobModal();
+  }
+);
+
+
+function openJobModal(job=null){
+
+  editingJobId =
+    job
+    ? job.id
+    : null;
+
+
+  $("modalTitle")
+    .textContent =
+    job
+    ? "Edit Job"
+    : "Add Job";
+
+
+  $("jobId").value =
+    job?.id || "";
+
+
+  $("jobTitle").value =
+    job?.title || "";
+
+
+  $("jobCompany").value =
+    job?.company || "";
+
+
+  $("jobLocation").value =
+    job?.location || "";
+
+
+  $("jobCountry").value =
+    job?.country || "";
+
+
+  $("jobCategory").value =
+    job?.category || "";
+
+
+  $("jobType").value =
+    job?.["job-type"] ||
+    "Full-time";
+
+
+  $("jobSalary").value =
+    job?.salary || "";
+
+
+  $("jobDeadline").value =
+    job?.deadline || "";
+
+
+  $("applicationUrl").value =
+    job?.application_url || "";
+
+
+  $("sourceName").value =
+    job?.source_name || "";
+
+
+  $("sourceUrl").value =
+    job?.source_url || "";
+
+
+  $("jobStatus").value =
+    job?.status ||
+    "pending";
+
+
+  $("jobVerified").checked =
+    job?.verified === true;
+
+
+  $("jobDescription").value =
+    job?.description || "";
+
+
+  $("jobRequirements").value =
+    job?.requirements || "";
+
+
+  $("jobModal")
+    .classList
+    .add("show");
+
+}
+
+
+function closeJobModal(){
+
+  $("jobModal")
+    .classList
+    .remove("show");
+
+  editingJobId =
+    null;
+
+}
+
+
+$("closeModal")
+.addEventListener(
+  "click",
+  closeJobModal
+);
+
+
+$("cancelModal")
+.addEventListener(
+  "click",
+  closeJobModal
+);
+
+
+/* =====================================================
+   SAVE JOB
+===================================================== */
+
+$("jobForm")
+.addEventListener(
+  "submit",
+  async(e)=>{
+
+    e.preventDefault();
+
+
+    const {
+      data:{
+        user
+      }
+    } =
+      await db.auth.getUser();
+
+
+    if(
+      !user ||
+      !user.email ||
+      user.email.toLowerCase()
+      !==
+      ADMIN_EMAIL.toLowerCase()
+    ){
+
+      toast(
+        "Admin authorization required.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    const payload = {
+
+      title:
+        $("jobTitle")
+        .value
+        .trim(),
+
+      company:
+        $("jobCompany")
+        .value
+        .trim(),
+
+      location:
+        $("jobLocation")
+        .value
+        .trim(),
+
+      country:
+        $("jobCountry")
+        .value
+        .trim(),
+
+      category:
+        $("jobCategory")
+        .value
+        .trim(),
+
+      "job-type":
+        $("jobType")
+        .value,
+
+      salary:
+        $("jobSalary")
+        .value
+        .trim() || null,
+
+      deadline:
+        $("jobDeadline")
+        .value || null,
+
+      description:
+        $("jobDescription")
+        .value
+        .trim(),
+
+      requirements:
+        $("jobRequirements")
+        .value
+        .trim() || null,
+
+      application_url:
+        $("applicationUrl")
+        .value
+        .trim() || null,
+
+      source_name:
+        $("sourceName")
+        .value
+        .trim() || null,
+
+      source_url:
+        $("sourceUrl")
+        .value
+        .trim() || null,
+
+      status:
+        $("jobStatus")
+        .value,
+
+      verified:
+        $("jobVerified")
+        .checked
+
+    };
+
+
+    showLoading();
+
+
+    let result;
+
+
+    if(editingJobId){
+
+      result =
+        await db
+        .from("jobs")
+        .update(payload)
+        .eq(
+          "id",
+          editingJobId
+        );
+
+    }else{
+
+      result =
+        await db
+        .from("jobs")
+        .insert(payload);
+
+    }
+
+
+    hideLoading();
+
+
+    if(result.error){
+
+      console.error(
+        result.error
+      );
+
+      toast(
+        "Could not save job: " +
+        result.error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    closeJobModal();
+
+
+    toast(
+      editingJobId
+      ? "Job updated successfully."
+      : "Job added successfully.",
+      "success"
+    );
+
+
+    await loadJobs();
+
+  }
+);
+
+
+/* =====================================================
+   EDIT
+===================================================== */
+
+window.editJob =
+function(id){
+
+  const job =
+    jobs.find(
+      j =>
+      String(j.id) ===
+      String(id)
+    );
+
+
+  if(!job){
+
+    toast(
+      "Job not found.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  openJobModal(job);
+
+};
+
+
+/* =====================================================
+   APPROVE / REJECT
+===================================================== */
+
+window.changeStatus =
+async function(
+  id,
+  status
+){
+
+  const job =
+    jobs.find(
+      j =>
+      String(j.id) ===
+      String(id)
+    );
+
+
+  if(!job){
+    return;
+  }
+
+
+  const action =
+    status === "approved"
+    ? "approve"
+    : "reject";
+
+
+  if(
+    !confirm(
+      `Are you sure you want to ${action} this job?`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  showLoading();
+
+
+  const {
+    error
+  } =
+    await db
+    .from("jobs")
+    .update({
+      status
+    })
+    .eq(
+      "id",
+      id
+    );
+
+
+  hideLoading();
+
+
+  if(error){
+
+    toast(
+      "Could not update status: " +
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  toast(
+    status === "approved"
+    ? "Job approved."
+    : "Job rejected.",
+    "success"
+  );
+
+
+  await loadJobs();
+
+};
+
+
+/* =====================================================
+   VERIFIED
+===================================================== */
+
+window.toggleVerified =
+async function(id){
+
+  const job =
+    jobs.find(
+      j =>
+      String(j.id) ===
+      String(id)
+    );
+
+
+  if(!job){
+    return;
+  }
+
+
+  showLoading();
+
+
+  const {
+    error
+  } =
+    await db
+    .from("jobs")
+    .update({
+      verified:
+        !job.verified
+    })
+    .eq(
+      "id",
+      id
+    );
+
+
+  hideLoading();
+
+
+  if(error){
+
+    toast(
+      "Could not update verification: " +
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  toast(
+    !job.verified
+    ? "Job verified."
+    : "Verification removed.",
+    "success"
+  );
+
+
+  await loadJobs();
+
+};
+
+
+/* =====================================================
+   DELETE
+===================================================== */
+
+window.deleteJob =
+async function(id){
+
+  if(
+    !confirm(
+      "Are you sure you want to permanently delete this job?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  showLoading();
+
+
+  const {
+    error
+  } =
+    await db
+    .from("jobs")
+    .delete()
+    .eq(
+      "id",
+      id
+    );
+
+
+  hideLoading();
+
+
+  if(error){
+
+    toast(
+      "Could not delete job: " +
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  toast(
+    "Job deleted successfully.",
+    "success"
+  );
+
+
+  await loadJobs();
+
+};
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+$("jobSearch")
+.addEventListener(
+  "input",
+  renderJobs
+);
+
+
+$("statusFilter")
+.addEventListener(
+  "change",
+  renderJobs
+);
+
+
+$("categoryFilter")
+.addEventListener(
+  "change",
+  renderJobs
+);
+
+
+/* =====================================================
+   USERS
+===================================================== */
+
+async function loadUsers(){
+
+  const {
+    data,
+    error
+  } =
+    await db
+    .from("users")
+    .select("*");
+
+
+  if(error){
+
+    console.error(
+      "Users:",
+      error
+    );
+
+
+    $("usersBody")
+      .innerHTML =
+      `
+        <tr>
+          <td colspan="4">
+            <div class="empty">
+              Could not load users.
+            </div>
+          </td>
+        </tr>
+      `;
+
+    return;
+  }
+
+
+  users =
+    data || [];
+
+
+  $("totalUsers")
+    .textContent =
+    users.length;
+
+
+  const body =
+    $("usersBody");
+
+
+  if(!users.length){
+
+    body.innerHTML =
+      `
+        <tr>
+          <td colspan="4">
+            <div class="empty">
+              No registered users found.
+            </div>
+          </td>
+        </tr>
+      `;
+
+    return;
+  }
+
+
+  body.innerHTML =
+    users
+    .map(user=>{
+
+      const name =
+        user.name ||
+        user.full_name ||
+        user.username ||
+        "-";
+
+
+      const email =
+        user.email ||
+        "-";
+
+
+      const phone =
+        user.phone ||
+        user.phone_number ||
+        "-";
+
+
+      const created =
+        user.created_at ||
+        user.created ||
+        null;
+
+
+      return `
+        <tr>
+
+          <td>
+            <strong>
+              ${escapeHTML(
+                name
+              )}
+            </strong>
+          </td>
+
+          <td>
+            ${escapeHTML(
+              email
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              phone
+            )}
+          </td>
+
+          <td>
+            ${formatDate(
+              created
+            )}
+          </td>
+
+        </tr>
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =====================================================
+   VISITORS
+===================================================== */
+
+async function loadVisitors(){
+
+  const {
+    data,
+    error
+  } =
+    await db
+    .from("visitors")
+    .select("*");
+
+
+  if(error){
+
+    console.error(
+      "Visitors:",
+      error
+    );
+
+
+    $("visitorsBody")
+      .innerHTML =
+      `
+        <tr>
+          <td colspan="3">
+            <div class="empty">
+              Visitors table is unavailable.
+            </div>
+          </td>
+        </tr>
+      `;
+
+
+    $("visitorCount")
+      .textContent =
+      "0";
+
+
+    return;
+  }
+
+
+  visitors =
+    data || [];
+
+
+  $("visitorCount")
+    .textContent =
+    visitors.length;
+
+
+  const body =
+    $("visitorsBody");
+
+
+  if(!visitors.length){
+
+    body.innerHTML =
+      `
+        <tr>
+          <td colspan="3">
+            <div class="empty">
+              No visitor records found.
+            </div>
+          </td>
+        </tr>
+      `;
+
+    return;
+  }
+
+
+  body.innerHTML =
+    visitors
+    .map(visitor=>{
+
+      const visitorId =
+        visitor.visitor_id ||
+        visitor.ip ||
+        visitor.ip_address ||
+        visitor.id ||
+        "-";
+
+
+      const page =
+        visitor.page ||
+        visitor.current_page ||
+        visitor.url ||
+        "-";
+
+
+      const lastSeen =
+        visitor.last_seen ||
+        visitor.updated_at ||
+        visitor.created_at ||
+        null;
+
+
+      return `
+        <tr>
+
+          <td>
+            ${escapeHTML(
+              visitorId
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              page
+            )}
+          </td>
+
+          <td>
+            ${formatDate(
+              lastSeen
+            )}
+          </td>
+
+        </tr>
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+$("darkModeBtn")
+.addEventListener(
+  "click",
+  ()=>{
+
+    document.body
+      .classList
+      .toggle("dark");
+
+
+    const dark =
+      document.body
+      .classList
+      .contains("dark");
+
+
+    localStorage.setItem(
+      "shaqohel_dark",
+      dark ? "1" : "0"
+    );
+
+
+    $("darkModeBtn")
+      .textContent =
+      dark
+      ? "☀️"
+      : "🌙";
+
+  }
+);
+
+
+if(
+  localStorage.getItem(
+    "shaqohel_dark"
+  ) === "1"
+){
+
+  document.body
+    .classList
+    .add("dark");
+
+  $("darkModeBtn")
+    .textContent =
+    "☀️";
+
+}
+
+
+/* =====================================================
+   REFRESH
+===================================================== */
+
+$("refreshBtn")
+.addEventListener(
+  "click",
+  async()=>{
+
+    await loadAll();
+
+    toast(
+      "Dashboard refreshed.",
+      "success"
+    );
+
+  }
+);
+
+
+/* =====================================================
+   MOBILE MENU
+===================================================== */
+
+$("menuBtn")
+.addEventListener(
+  "click",
+  ()=>{
+
+    $("sidebar")
+      .classList
+      .toggle("open");
+
+  }
+);
+
+
+/* =====================================================
+   CLOSE MENU WHEN CLICKING PAGE
+===================================================== */
+
+document
+.querySelector(".content")
+.addEventListener(
+  "click",
+  ()=>{
+
+    $("sidebar")
+      .classList
+      .remove("open");
+
+  }
+);
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+checkSession();
+
+</script>
+
+</body>
+</html>
